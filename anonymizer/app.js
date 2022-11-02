@@ -1,7 +1,13 @@
 const fs = require('fs');
+const path = require('path');
 const crypto = require('crypto');
 
+const { exit } = require('process');
+
+const READ_ONLY = false;
+
 const SECRET_SALT = fs.readFileSync('salt.secret');
+
 const HW_DIRS = [
     'C:\\Users\\ColeNelson\\Desktop\\cs782-research\\submissions\\hw1',
     'C:\\Users\\ColeNelson\\Desktop\\cs782-research\\submissions\\hw2',
@@ -43,11 +49,12 @@ included.forEach(incl => console.log(incl));
 console.log();
 
 console.log("Generating pseudonyms for included participants...");
-pseudonyms = included.reduce((curr, next) => { return {
-    ...curr,
-    [next]: crypto.createHmac("SHA256", SECRET_SALT)
-                .update(next)
-                .digest('hex')
+pseudonyms = included.reduce((curr, next) => {
+    return {
+        ...curr,
+        [next]: crypto.createHmac("SHA256", SECRET_SALT)
+            .update(next)
+            .digest('hex')
     }
 }, {});
 
@@ -56,3 +63,60 @@ fs.writeFileSync('pseudonyms.secret',
         .map(ps => `${ps},${pseudonyms[ps]}`)
         .join('\n')
 );
+
+console.log("Pseudonyms generated!");
+
+if (READ_ONLY) {
+    console.log("User identification complete. READ_ONLY flag set to true; exiting...")
+    exit(0);
+}
+
+console.log("Recursively copying submissions...");
+
+copyRecursiveSync('../submissions', '../anonymized_submissions');
+
+console.log('Recursive copy complete!');
+
+console.log('Anonymizing file names...');
+
+
+
+fs.readdirSync('../anonymized_submissions').forEach(hwDir => {
+    console.log(`In ${hwDir}...`);
+    fs.readdirSync(`../anonymized_submissions/${hwDir}`).forEach(sub => {
+        if(ommitted.includes(sub)) {
+            console.log(`Removing ommitted submission for ${sub}`);
+            fs.rmdirSync(`../anonymized_submissions/${hwDir}/${sub}`, {recursive: true, force: true});
+        } else if (included.includes(sub)) {
+            console.log(`Anonymizing submission for ${sub}`);
+            fs.renameSync(`../anonymized_submissions/${hwDir}/${sub}`,
+                          `../anonymized_submissions/${hwDir}/${pseudonyms[sub]}`);
+        } else {
+            console.error(`Erroneous submission for ${sub}`);
+            exit(1);
+        }
+    });
+})
+
+console.log('File name anonymization complete!')
+
+/**
+ * https://stackoverflow.com/questions/13786160/copy-folder-recursively-in-node-js
+ * Look ma, it's cp -R.
+ * @param {string} src  The path to the thing to copy.
+ * @param {string} dest The path to the new copy.
+ */
+function copyRecursiveSync(src, dest) {
+    var exists = fs.existsSync(src);
+    var stats = exists && fs.statSync(src);
+    var isDirectory = exists && stats.isDirectory();
+    if (isDirectory) {
+        fs.mkdirSync(dest);
+        fs.readdirSync(src).forEach(function (childItemName) {
+            copyRecursiveSync(path.join(src, childItemName),
+                path.join(dest, childItemName));
+        });
+    } else {
+        fs.copyFileSync(src, dest);
+    }
+};

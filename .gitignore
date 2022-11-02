@@ -1,5 +1,7 @@
 **/*.secret
+**/node_modules
 sq
+anonymized_submissions
 submissions
 templates
 docker-compose.yml
