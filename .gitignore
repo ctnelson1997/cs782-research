@@ -1,0 +1,5 @@
+**/*.secret
+sq
+submissions
+templates
+docker-compose.yml
