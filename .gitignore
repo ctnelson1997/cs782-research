@@ -1,7 +1,10 @@
 **/*.secret
+**/*.db
 **/node_modules
 sq
 anonymized_submissions
 submissions
 templates
 docker-compose.yml
+all_depcheck.sh
+all_scan.sh

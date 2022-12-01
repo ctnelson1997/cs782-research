@@ -9,11 +9,8 @@ const READ_ONLY = false;
 const SECRET_SALT = fs.readFileSync('salt.secret');
 
 const HW_DIRS = [
-    'C:\\Users\\ColeNelson\\Desktop\\cs782-research\\submissions\\hw1',
-    'C:\\Users\\ColeNelson\\Desktop\\cs782-research\\submissions\\hw2',
     'C:\\Users\\ColeNelson\\Desktop\\cs782-research\\submissions\\hw3',
-    'C:\\Users\\ColeNelson\\Desktop\\cs782-research\\submissions\\hw4',
-    'C:\\Users\\ColeNelson\\Desktop\\cs782-research\\submissions\\hw5',
+    'C:\\Users\\ColeNelson\\Desktop\\cs782-research\\submissions\\hw6',
 ]
 
 const usernames = [];
@@ -73,7 +70,11 @@ if (READ_ONLY) {
 
 console.log("Recursively copying submissions...");
 
-copyRecursiveSync('../submissions', '../anonymized_submissions');
+// copyRecursiveSync('../submissions', '../anonymized_submissions');
+copyRecursiveSync('../submissions/hw3', '../anonymized_submissions/hw3');
+copyRecursiveSync('../submissions/hw6', '../anonymized_submissions/hw6');
+
+
 
 console.log('Recursive copy complete!');
 
@@ -82,20 +83,22 @@ console.log('Anonymizing file names...');
 
 
 fs.readdirSync('../anonymized_submissions').forEach(hwDir => {
-    console.log(`In ${hwDir}...`);
-    fs.readdirSync(`../anonymized_submissions/${hwDir}`).forEach(sub => {
-        if(ommitted.includes(sub)) {
-            console.log(`Removing ommitted submission for ${sub}`);
-            fs.rmdirSync(`../anonymized_submissions/${hwDir}/${sub}`, {recursive: true, force: true});
-        } else if (included.includes(sub)) {
-            console.log(`Anonymizing submission for ${sub}`);
-            fs.renameSync(`../anonymized_submissions/${hwDir}/${sub}`,
-                          `../anonymized_submissions/${hwDir}/${pseudonyms[sub]}`);
-        } else {
-            console.error(`Erroneous submission for ${sub}`);
-            exit(1);
-        }
-    });
+    if (hwDir.includes("hw3") || hwDir.includes("hw6")) {
+        console.log(`In ${hwDir}...`);
+        fs.readdirSync(`../anonymized_submissions/${hwDir}`).forEach(sub => {
+            if (ommitted.includes(sub)) {
+                console.log(`Removing ommitted submission for ${sub}`);
+                fs.rmdirSync(`../anonymized_submissions/${hwDir}/${sub}`, { recursive: true, force: true });
+            } else if (included.includes(sub)) {
+                console.log(`Anonymizing submission for ${sub}`);
+                fs.renameSync(`../anonymized_submissions/${hwDir}/${sub}`,
+                    `../anonymized_submissions/${hwDir}/${pseudonyms[sub]}`);
+            } else {
+                console.error(`Erroneous submission for ${sub}`);
+                exit(1);
+            }
+        });
+    }
 })
 
 console.log('File name anonymization complete!')
