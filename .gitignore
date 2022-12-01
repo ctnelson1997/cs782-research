@@ -1,6 +1,7 @@
 **/*.secret
 **/*.db
 **/node_modules
+**/.ipynb_checkpoints
 sq
 anonymized_submissions
 submissions

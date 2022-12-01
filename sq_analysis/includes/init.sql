@@ -7,10 +7,10 @@ CREATE TABLE IF NOT EXISTS SQ_Project (
 CREATE TABLE IF NOT EXISTS SQ_Issue (
 	id TEXT PRIMARY KEY,
 	project_id TEXT NOT NULL,
-	debt TEXT NOT NULL,
-	effort TEXT NOT NULL,
-	message TEXT NOT NULL,
-	rule TEXT NOT NULL,
-    severity TEXT NOT NULL,
-	type TEXT NOT NULL
+	debt TEXT,
+	effort TEXT,
+	message TEXT,
+	rule TEXT,
+    severity TEXT,
+	type TEXT
 );

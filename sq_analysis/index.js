@@ -63,7 +63,7 @@ async function collectPage(url, pnum, bodyField) {
 }
 
 function expandProject(p, k, v) {
-    projectMap[p] = {...projectMap[p], [k]: v}
+    projectMap[p] = { ...projectMap[p], [k]: v }
 }
 
 async function extractData() {
@@ -84,7 +84,7 @@ async function saveData(db) {
         const params = p.name.split("_");
 
         // I screwed up HW3 analysis
-        if(params.length === 2) {
+        if (params.length === 2) {
             await db.run(INSERT_PROJECT_SQL,
                 "f22_" + p.name,
                 "f22",
@@ -99,7 +99,27 @@ async function saveData(db) {
                 params[2]
             )
         }
-        
+
+    }));
+
+    await Promise.all(projects.map(async (p) => {
+        await Promise.all(projectMap[p.name].issues.map(async (issue) => {
+            // I screwed up HW3 analysis
+            let newName = p.name;
+            if(p.name.split("_").length === 2) {
+                newName = `f22_${p.name}`
+            }
+            await db.run(INSERT_ISSUE_SQL,
+                issue.key,
+                newName,
+                issue.debt,
+                issue.effort,
+                issue.message,
+                issue.rule,
+                issue.severity,
+                issue.type
+            );
+        }));
     }));
 }
 
@@ -113,7 +133,7 @@ async function execute() {
     for (const stmt of init_stmts) {
         await db.run(stmt)
     }
-    
+
     await extractData();
     await saveData(db);
     db.close();
