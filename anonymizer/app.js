@@ -9,8 +9,8 @@ const READ_ONLY = false;
 const SECRET_SALT = fs.readFileSync('salt.secret');
 
 const HW_DIRS = [
-    'C:\\Users\\ColeNelson\\Desktop\\cs782-research\\submissions\\hw3',
-    'C:\\Users\\ColeNelson\\Desktop\\cs782-research\\submissions\\hw6',
+    'C:\\Users\\ColeNelson\\Desktop\\cs782-research\\submissions\\hw7',
+    'C:\\Users\\ColeNelson\\Desktop\\cs782-research\\submissions\\hw8'
 ]
 
 const usernames = [];
@@ -23,7 +23,7 @@ HW_DIRS.forEach(hwDir => {
     })
 })
 
-const ommitted = [];
+let ommitted = [];
 let included = usernames.slice();
 
 usernames.forEach(username => {
@@ -34,6 +34,9 @@ usernames.forEach(username => {
         }
     });
 })
+
+included = included.concat(ommitted);
+ommitted = [];
 
 console.log(`${included.length} users were included.`);
 console.log(`${ommitted.length} users were ommitted.`);
@@ -71,8 +74,8 @@ if (READ_ONLY) {
 console.log("Recursively copying submissions...");
 
 // copyRecursiveSync('../submissions', '../anonymized_submissions');
-copyRecursiveSync('../submissions/hw3', '../anonymized_submissions/hw3');
-copyRecursiveSync('../submissions/hw6', '../anonymized_submissions/hw6');
+copyRecursiveSync('../submissions/hw3', '../anonymized_submissions/hw7');
+copyRecursiveSync('../submissions/hw6', '../anonymized_submissions/hw8');
 
 
 
@@ -83,7 +86,7 @@ console.log('Anonymizing file names...');
 
 
 fs.readdirSync('../anonymized_submissions').forEach(hwDir => {
-    if (hwDir.includes("hw3") || hwDir.includes("hw6")) {
+    if (hwDir.includes("hw7") || hwDir.includes("hw8")) {
         console.log(`In ${hwDir}...`);
         fs.readdirSync(`../anonymized_submissions/${hwDir}`).forEach(sub => {
             if (ommitted.includes(sub)) {
