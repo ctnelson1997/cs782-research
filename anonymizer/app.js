@@ -74,8 +74,8 @@ if (READ_ONLY) {
 console.log("Recursively copying submissions...");
 
 // copyRecursiveSync('../submissions', '../anonymized_submissions');
-copyRecursiveSync('../submissions/hw3', '../anonymized_submissions/hw7');
-copyRecursiveSync('../submissions/hw6', '../anonymized_submissions/hw8');
+copyRecursiveSync('../submissions/hw7', '../anonymized_submissions/hw7');
+copyRecursiveSync('../submissions/hw8', '../anonymized_submissions/hw8');
 
 
 
